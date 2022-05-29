@@ -1,0 +1,80 @@
+# COMMANDS TO CREATE NETWORK AND START MYSQL AND PHPMYADMIN CONTAINERS ON THE SAME NETWORK FOR CONNECTIVITY
+
+## EXAMPLE ONE
+
+1. START MYSQL CONTAINER WITH CUSTOM ROOT PASSWORD (DEFAULT BRIDGE NETWORK)
+
+
+docker run \
+  -e MYSQL_ROOT_PASSWORD=my-password \
+  mysql
+
+
+
+2. START PHPMYADMIN CONTAINER (DEFAULT BRIDGE NETWORK)
+
+(if you launched the phpmyadmin/phpmyadmin container before and it ip address is 172.17.0.2
+check otherwise if you haven't launched it before)
+
+
+docker run \
+  -p 8080:80 \
+  -e PMA_HOST=172.17.0.2 \
+  phpmyadmin/phpmyadmin
+
+
+
+## EXAMPLE TWO
+
+### CREATE CUSTOM NETWORK (and assign "mysql" as its name - it is not the name of the image of mysql server)
+
+docker network create mysql
+
+3. START MYSQL CONTAINER WITH CUSTOM ROOT PASSWORD (ON CUSTOM BRIDGE NETWORK WITH NAME NAD CUSTOM NAME OF THE CONTAINER)
+
+docker run \
+  --network mysql \
+  -e MYSQL_ROOT_PASSWORD=my-password \
+  --name mysql \
+  -d mysql
+
+
+4. START PHPMYADMIN CONTAINER (ON CUSTOM BRIDGE NETWORK WITH NAME AND CUSTOM NAME OF THE CONTAINER)
+
+docker run \
+  --network mysql \
+  -p 8080:80 \
+  -e PMA_HOST=mysql \
+  --name phpmyadmin \
+  -d phpmyadmin/phpmyadmin
+
+## CHECK IF THE CONTAINERS HAVE BEEN CREATED AND ARE ON THE SAME NETWORK
+
+docker ps
+
+docker network inspect mysql
+
+### IF YOU SEE SOMETHING LIKE THIS:
+
+"Containers": {
+            "94c87fd3759fa5a305d6f29028bbfafc950c12e7bd7a35ca93da3723900dcc18": {
+                "Name": "phpmyadmin",
+                "EndpointID": "2f974408c330276eb470da3b6dda4c7c245f97dd9806f474ede64ebbcd39a0fe",
+                "MacAddress": "02:42:ac:12:00:02",
+                "IPv4Address": "172.18.0.2/16",
+                "IPv6Address": ""
+            },
+            "a4d786c33e4a4b3edcf448907abb2b62685efc8a9b6f5f3428a0879a303d5c96": {
+                "Name": "mysql",
+                "EndpointID": "e276f545d00c470c18f9f14fc61aeefec639e5b5a4b5d95b993f9642a91a1711",
+                "MacAddress": "02:42:ac:12:00:03",
+                "IPv4Address": "172.18.0.3/16",
+                "IPv6Address": ""
+            }
+        },
+### AND ARE ABLE TO LOG INTO PHPMyAdmin PANEL ON: http://localhost:8080
+
+### THEN YOUR JOB IS DONE - YOU HAVE SUCCESSFULLY CREATED TWO CONTAINERS ON THE SAME CUSTOM NETWORK AND MAKE THEM TALK TO EACH OTHER
+## ALL WORKED FINE IN MY CASE AND I AM ABLE TO USE PHPMYADMIN AND CREATE A NEW DATABASE
+
+

@@ -1,0 +1,79 @@
+# COMMANDS TO CREATE NETWORK AND START THREE CONTAINERS: MYSQL, WORDPRESS AND PHPMYADMIN ON THE SAME NETWORK FOR CONNECTIVITY
+
+## CREATE CUSTOM NETWORK (and assign "wordpress" as its name)
+
+
+1. CREATE CUSTOM NETWORK
+
+
+docker network create wordpress
+
+
+2. START MYSQL CONTAINER (CUSTOM VERSION NUMBER 5.7) WITH 4 CUSTOM ENVIRONMENT VARIABLES
+
+
+
+docker run \
+  --network wordpress \
+  -e MYSQL_ROOT_PASSWORD=my-password \
+  -e MYSQL_DATABASE=wordpressdb \
+  -e MYSQL_USER=wordpressusr \
+  -e MYSQL_PASSWORD=wordpresspass \
+  --name mysql \
+  -d mysql:5.7
+
+
+
+3. START WORDPRESS CONTAINER (CUSTOM VERSION NUMBER 5.4 - be careful where you are as the html folder will be synced with that location) 
+
+
+
+docker run \
+  --network wordpress \
+  --name wordpress \
+  -p 8080:80 \
+  -v $PWD/html:/var/www/html \
+  -d wordpress:5.4
+
+
+
+
+4. START PHPMYADMIN CONTAINER
+
+
+
+docker run \
+  --network wordpress \
+  -p 8888:80 \
+  -e PMA_HOST=mysql \
+  --name phpmyadmin \
+  -d phpmyadmin/phpmyadmin
+
+
+## CHECK IF THE CONTAINERS HAVE BEEN CREATED AND ARE ON THE SAME NETWORK
+
+## NOW IT'S TIME TO OPEN WORDPRESS: http://localhost:8080
+
+## REMEMBER THAT THE "Database Host" IN THE INITIAL WORDPRESS SETUP FORM SHOULD BE:
+
+"myslq" (or what you named the mysql container instance) NOT "localhost"
+
+### YOUR JOB IS DONE - YOU HAVE SUCCESSFULLY CREATED TWO CONTAINERS ON THE SAME CUSTOM NETWORK AND MAKE THEM TALK TO ONE ANOTHER
+## ALL WORKED FINE IN MY CASE AND I AM ABLE TO LAUNCH A NEW WORDPRESS WEBSITE ON DOCKER
+
+## IF YOU WANT OR NEED TO START FRESH JUST STOP & REMOVE ALL CONTAINERS AS WELL AS PRUNE CUSTOM NETWORKS
+
+docker ps
+
+docker stop [id]
+
+docker stop [id]
+
+docker stop [id]
+
+docker container prune
+
+docker network ls
+
+docker network prune
+

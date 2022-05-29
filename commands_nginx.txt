@@ -1,0 +1,27 @@
+# START NGINX CONTAINER WITH VOLUME IN THE CURRENT DIRECTORY TO SYNC FILES
+
+
+cd ~/Sites
+
+mkdir nginx_docker
+
+cd nginx_docker
+
+touch index.html
+
+echo "My Nginx Container is Live" > index.html
+
+docker run -p 8080:80 -v $PWD:/usr/share/nginx/html -d nginx
+
+## CHECK IF THE CONTAINER IS RUNNING
+
+docker ps
+
+## STOP, REMOVE AND PRUNE ALL STOPPED, UNUSED CONTAINERS
+
+docker stop [container_id]
+
+docker rm [container_id]
+
+docker container prune
+

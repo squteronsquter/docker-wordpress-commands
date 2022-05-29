@@ -1,0 +1,83 @@
+# CREATE A MONGO DATABASE CONTAINER AND MAKE THE DATABASE YOU CREATE INSIDE PERSISTENT IN A LOCAL FOLDER TO BE ABLE TO USE IT FOR OTHER CONTAINERS
+
+docker pull mongo
+
+docker run mongo
+
+docker ps
+
+docker exec [id] bash
+
+docker exec -it [id] bash
+
+docker exec -it [id] sh    (additional process)
+
+docker inspect [id]
+
+docker exec -t [id] mongo   (run new process "mongo" as by default only process "mongod" is run when the container is created and launched)
+
+docker exec -it [id] bash   (run bash process and then when inside the container run "mongo" process)
+
+ls
+
+cd data
+
+ls data/db
+
+## CREATE A DATABASE INSIDE THE CONTAINER YOU CREATED AND ACCESSED (ABOVE)
+
+## WHILE INSIDE (docker exec -it [id] bash) RUN "mongo" process which will allow to create, edit and view databases)
+
+cd /data
+
+> show dbs
+
+> use mycustomdatabase
+
+> db.posts.insert({"post": "Post One"})
+
+> db.posts.insert({"post": "Post Two"})
+
+> db.posts.insert({"post": "Post Three"})
+
+> db.posts.find()
+
+> exit
+
+
+ls -la db
+
+# if you see a file "collection-123456789-7.wt with a date of creation close to when you ran your commands inside, then it is your database
+
+exit
+
+# WHEN BACK IN YOU LOCAL HOST COMPUTER AND THE FOLDER YOU WOULD LIKE TO HAVE YOUR DATABASE TO BE KEPT PERSISTENT
+
+ls -la db   (folder may be empty)
+
+docker run -d -v $PWD/db:/data/db mongo
+
+# CHECK IF DATABASE ./db folder has files synced with mongo container
+
+# IF NEED BE "EXEC" INTO THE CONTAINER AND REPEAT STEPS ABOVE TO CREATE A NEW DATABASE AND SEE IT HAS BEEN SYNCED WHEN YOU EXIT MONGO PROMPT AND THE CONTAINER
+
+eg. RUN:
+
+docker run -d -v $PWD/db:/data/db mongo
+
+docker ps
+
+docker exec -it c64 bash
+
+> ls -la /data/db
+
+> show dbs
+
+> exit
+
+# ALL WORKED FINE. THE LOCAL DATABASE HAS BEEN SYNCED WITH THE NEW CONTAINER
+
+
+
+
+

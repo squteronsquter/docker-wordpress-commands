@@ -1,0 +1,12 @@
+show dbs
+use myposts
+db.posts.insert({"post": "Helo Post One"})
+db.posts.insert({"post": "Helo Post Two"})
+db.posts.insert({"post": "Helo Post Three"})
+db.posts.find()
+show dbs
+use myposts
+db.posts.find()
+shows dbs
+clear
+show dbs
